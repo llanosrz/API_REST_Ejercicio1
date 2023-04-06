@@ -5,10 +5,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -20,7 +18,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -29,12 +26,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "clientes")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "clientes")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+
+// @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 
 public class Cliente implements Serializable {
 
@@ -45,20 +43,25 @@ public class Cliente implements Serializable {
     private long id;
 
     @NotEmpty(message = "El nombre no puede estar vacio")
-    @Size(min = 4, max = 25, message = "El nombre tiene que estar entre 4 y 25 caracteres")
-    
+    @Size(min = 4, max = 25, message = "El nombre tiene que estar entre 4 y 25 caracteres.")
     private String nombre;
+
     private String apellidos;
     
     @PastOrPresent
     private LocalDate fechaAlta;
 
+    @NotNull
+    private String imagenCliente;
+
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    //@JsonManagedReference
+    //@JsonManagedReference // porque se llama al padre
     private Hotel hotel;
 
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "cliente")
-    //@JsonIgnore
+    // @JsonBackReference
     private List<Mascota> mascotas;
 
 }
